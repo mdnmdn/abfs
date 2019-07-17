@@ -28,14 +28,14 @@ abfs.init = (options) => {
  * Init a new virtual drive
  */
 abfs.registerDriver = (driver, options) => {
-
+    // TODO
 }
 
 const getPathInfo = (path) => {
-    const segments = path.split(':');
+    const segments = path.split('/');
     if (segments.length <= 1) {
         if (!defaultDrive)
-    å}
+    }
 }
 
 abfs.ls = async (path, search = null) => {
