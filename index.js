@@ -1,6 +1,7 @@
 const fs = require('./drivers/fs');
 const memory = require('./drivers/fs');
 const zip = require('./drivers/fs');
+const { error, errors } = require('./utils');
 
 const abfs = {};
 
@@ -13,7 +14,7 @@ const drivers = {
     mongo: './drivers/mongo',
 };
 
-const drives = {};
+const mounts = {};
 
 let defaultDrive;
 
@@ -21,7 +22,7 @@ let defaultDrive;
  * Init a new virtual drive
  */
 abfs.init = (options) => {
-    
+    mounts[options.id] = options;
 }
 
 /**
@@ -31,11 +32,22 @@ abfs.registerDriver = (driver, options) => {
     // TODO
 }
 
-const getPathInfo = (path) => {
-    const segments = path.split('/');
-    if (segments.length <= 1) {
-        if (!defaultDrive)
+const getPathInfo = (composedPath) => {
+    const firstSlash = composedPath.indexOf('/');
+    
+    const drivePath = firstSlash >= 0 ? composedPath.substring(0, firstSlash) : composedPath;
+    const path = firstSlash >= 0 ? composedPath.substring(drivePath.length + 1) : '';
+    
+    if (!mounts[drivePath]) {
+        throw error(errors.DRIVE_NOT_EXISTS);
     }
+
+    return {
+        path,
+        pathCode,
+        mount: mounts[drivePath]
+    }
+
 }
 
 abfs.ls = async (path, search = null) => {
