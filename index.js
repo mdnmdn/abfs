@@ -8,10 +8,10 @@ const abfs = {};
 const drivers = {
     fs: './drivers/fs',
     memory: './drivers/memory',
-    zip: './drivers/zip',
-    gdrive: './drivers/gdrive',
-    s3: './drivers/s3',
-    mongo: './drivers/mongo',
+    //zip: './drivers/zip',
+    //gdrive: './drivers/gdrive',
+    //s3: './drivers/s3',
+    //mongo: './drivers/mongo',
 };
 
 const mounts = {};
@@ -22,7 +22,15 @@ let defaultDrive;
  * Init a new virtual drive
  */
 abfs.init = (options) => {
-    mounts[options.id] = options;
+  const { id, driver: driverName } = options;
+  if (!driverName) throw error(errors.MISSING_DRIVER);
+  if (!id) throw error(errors.MISSING_ID);
+  const driverInit = drivers[driverName];
+  if (!driverInit) throw error(errors.DRIVER_NOT_EXISTS, `Unkown driver ${driverName}`);
+  
+  if ( typeof driverInit === 'string') {
+    mounts[id] = require(driverInit);
+  }
 }
 
 /**
@@ -35,23 +43,25 @@ abfs.registerDriver = (driver, options) => {
 const getPathInfo = (composedPath) => {
     const firstSlash = composedPath.indexOf('/');
     
-    const drivePath = firstSlash >= 0 ? composedPath.substring(0, firstSlash) : composedPath;
-    const path = firstSlash >= 0 ? composedPath.substring(drivePath.length + 1) : '';
-    
-    if (!mounts[drivePath]) {
+    const pathCode = firstSlash >= 0 ? composedPath.substring(0, firstSlash) : composedPath;
+    const path = firstSlash >= 0 ? composedPath.substring(pathCode.length + 1) : '';
+
+    const mount = mounts[pathCode];
+
+    if (!mount) {
         throw error(errors.DRIVE_NOT_EXISTS);
     }
 
     return {
         path,
         pathCode,
-        mount: mounts[drivePath]
+        mount,
     }
-
 }
 
 abfs.ls = async (path, search = null) => {
     const pathInfo = getPathInfo(path);
+    console.log(pathInfo);
 };
 
 abfs.stats = async (path) => {

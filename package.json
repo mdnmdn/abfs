@@ -1,11 +1,11 @@
 {
-  "name": "abfs",
+  "name": "@mdnmdn/abfs",
   "version": "1.0.0",
   "description": "Abstract file system",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Marco De Nittis <marco.denitts@gmail.com> (https://github.com/mdnmdn)",
+  "license": "MIT"
 }

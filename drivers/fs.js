@@ -16,7 +16,7 @@ class drive {
     }
 
     init = async () => {
-        
+        console.log('drive-init');
     }
 
     ls = async (path, search, options = {}) => {
